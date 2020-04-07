@@ -7,6 +7,14 @@ class LinkedPair:
         self.value = value
         self.next = None
 
+def insertList(node, key, value):
+    if node.key == key:
+        node.value = value
+    elif node.next is not None:
+        insertList(node.next,key, value)
+    else:
+        node.next = LinkedPair(key, value)
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
@@ -54,7 +62,12 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        if self.storage[index] != None:
+            insertList(self.storage[index], key, value)
+        else:
+            self.storage[index] = LinkedPair(key,value)
+
 
 
 
@@ -66,6 +79,11 @@ class HashTable:
 
         Fill this in.
         '''
+        index = self._hash_mod(key)
+        if self.storage[index] != None:
+            self.storage[index] = None
+        else:
+            print("Key is not found")
         pass
 
 
@@ -77,7 +95,13 @@ class HashTable:
 
         Fill this in.
         '''
+        index = self._hash_mod(key)
+        if self.storage[index] != None:
+            return self.storage[index].value
+        else:
+            print("Key is not found")
         pass
+        
 
 
     def resize(self):
@@ -87,6 +111,13 @@ class HashTable:
 
         Fill this in.
         '''
+        self.capacity = self.capacity * 2
+        new_storage = [None] * self.capacity
+
+        for i in range(len(self.storage)):
+            new_storage[i] = self.storage[i]
+
+        self.storage = new_storage
         pass
 
 
