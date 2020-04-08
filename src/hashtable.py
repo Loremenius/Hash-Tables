@@ -15,6 +15,23 @@ def insertList(node, key, value):
     else:
         node.next = LinkedPair(key, value)
 
+def deleteList(prev_node, current_node, key):
+    if current_node.key == key:
+        prev_node.next = current_node.next
+        return True
+    elif current_node.next is not None:
+        deleteList(current_node, current_node.next, key)
+    else:
+        return False
+
+def retrieveList(node, key):
+    if node.key == key:
+        return node.value
+    elif node.next is not None:
+        return retrieveList(node.next, key)
+    else:
+        return None
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
@@ -81,10 +98,15 @@ class HashTable:
         '''
         index = self._hash_mod(key)
         if self.storage[index] != None:
-            self.storage[index] = None
+            if self.storage[index].key != key and self.storage[index].next != None:
+                deleted = deleteList(self.storage[index], self.storage[index].next, key)
+                if deleted == False:
+                    print("Key is not found")
+            else:        
+                self.storage[index] = None
         else:
             print("Key is not found")
-        pass
+        
 
 
     def retrieve(self, key):
@@ -97,10 +119,10 @@ class HashTable:
         '''
         index = self._hash_mod(key)
         if self.storage[index] != None:
-            return self.storage[index].value
+            return retrieveList(self.storage[index], key)
         else:
-            print("Key is not found")
-        pass
+            return None
+        
         
 
 
@@ -112,13 +134,16 @@ class HashTable:
         Fill this in.
         '''
         self.capacity = self.capacity * 2
-        new_storage = [None] * self.capacity
+        old_storage = self.storage
+        self.storage = [None] * self.capacity
 
-        for i in range(len(self.storage)):
-            new_storage[i] = self.storage[i]
+        for i in old_storage:
+            if i is not None:
+                node = i
+                while node is not None:
+                    self.insert(node.key, node.value)
+                    node = node.next
 
-        self.storage = new_storage
-        pass
 
 
 
